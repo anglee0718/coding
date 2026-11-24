@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>크롤러 포켓 허브</title>
+  <style>
+    :root {
+      --bg-grad: radial-gradient(circle at top left, #eef4ff 0%, #fafbff 52%, #f4f1ff 100%);
+      --panel: #ffffff;
+      --soft: #f6f8fc;
+      --border: #e3e8f2;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --primary: #4f46e5;
+      --primary-2: #7c3aed;
+      --ok-bg: #ecfdf5;
+      --ok-text: #047857;
+      --ok-border: #a7f3d0;
+      --del-bg: #fef2f2;
+      --del-text: #dc2626;
+      --del-border: #fecaca;
+      --shadow: 0 8px 24px rgba(31, 41, 55, 0.06);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Pretendard", "Segoe UI", "Apple SD Gothic Neo", sans-serif;
+      background: var(--bg-grad);
+      color: var(--text);
+    }
+
+    .shell {
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+
+    .brand-title {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .brand-sub {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .badges {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .badge.ok {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+      border-color: var(--ok-border);
+    }
+
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .card-label {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    input, select, button {
+      font-family: inherit;
+      font-size: 0.93rem;
+      border-radius: 12px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      background: var(--soft);
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.15s ease, transform 0.12s ease;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+
+    input[type="text"], input[type="number"] {
+      flex: 1;
+      min-width: 170px;
+    }
+
+    button {
+      border: none;
+      background: linear-gradient(135deg, var(--primary), var(--primary-2));
+      color: #fff;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.04);
+    }
+
+    button:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .btn-ghost {
+      background: var(--soft);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-danger {
+      background: var(--del-bg);
+      color: var(--del-text);
+      border: 1px solid var(--del-border);
+      padding: 6px 11px;
+      font-size: 0.8rem;
+      border-radius: 10px;
+    }
+
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--soft);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.83rem;
+      font-weight: 600;
+    }
+
+    .status {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--muted);
+      padding: 2px 4px 10px;
+      min-height: 22px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .entry {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+    }
+
+    .entry-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .q-pill {
+      background: #eef2ff;
+      color: var(--primary);
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-weight: 700;
+    }
+
+    .item {
+      background: var(--soft);
+      border: 1px solid #edf0f7;
+      border-radius: 14px;
+      padding: 12px 14px;
+      margin-top: 9px;
+    }
+
+    .item-field {
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: #374151;
+      margin-bottom: 6px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .item-link {
+      margin-top: 4px;
+    }
+
+    .item-link a {
+      color: var(--primary);
+      font-size: 0.83rem;
+      font-weight: 600;
+      text-decoration: none;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .item-link a:hover {
+      text-decoration: underline;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 14px 8px;
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 640px) {
+      .row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      button {
+        width: 100%;
+      }
+      .entry-head .btn-danger,
+      .chip .btn-danger {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <header class="topbar">
+      <div>
+        <h1 class="brand-title">크롤러 포켓 허브</h1>
+        <div class="brand-sub">HTTPS 웹앱 · 모바일/PC 접속 · 디스코드 연동</div>
+      </div>
+      <div class="badges">
+        <span class="badge ok">HTTPS 보안</span>
+        <span class="badge" id="botBadge">디스코드 확인 중...</span>
+      </div>
+    </header>
+
+    <form class="card row" id="searchForm">
+      <input id="queryInput" type="text" placeholder="검색할 주제를 입력하세요 (예: 파이썬 비동기 크롤링)" maxlength="120" required />
+      <button id="searchBtn" type="submit">검색 및 요약</button>
+    </form>
+
+    <section class="card">
+      <div class="card-label">연동된 디스코드 ID 등록</div>
+      <form class="row" id="userForm">
+        <input
+          id="discordIdInput"
+          type="text"
+          inputmode="numeric"
+          pattern="[0-9]+"
+          placeholder="디스코드 사용자 ID 입력 (숫자만)"
+          required
+        />
+        <button type="submit" class="btn-ghost" id="addUserBtn">ID 등록</button>
+      </form>
+      <div class="chips" id="userChips"></div>
+    </section>
+
+    <section class="card">
+      <div class="row" style="margin-bottom: 10px;">
+        <select id="userFilter">
+          <option value="all">전체 기록</option>
+        </select>
+        <input id="filterInput" type="text" placeholder="저장된 기록 키워드 필터..." />
+      </div>
+      <div class="row">
+        <button id="refreshBtn" type="button" class="btn-ghost">새로고침</button>
+        <button id="organizeBtn" type="button" class="btn-ghost">기록 정리(중복·빈항목 제거)</button>
+        <button id="clearAllBtn" type="button" class="btn-danger">전체 삭제</button>
+      </div>
+    </section>
+
+    <div class="status" id="statusText"></div>
+    <main id="list"></main>
+  </div>
+
+  <script>
+    let allHistory = [];
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#39;");
+    }
+
+    function safeUrl(url) {
+      const trimmed = String(url ?? "").trim();
+      return /^https?:\/\//i.test(trimmed) ? trimmed : "#";
+    }
+
+    function setStatus(msg) {
+      document.getElementById("statusText").textContent = msg;
+    }
+
+    async function loadStatus() {
+      try {
+        const res = await fetch("/api/status");
+        const st = await res.json();
+        const badge = document.getElementById("botBadge");
+        if (st.discord_enabled) {
+          badge.textContent = `디스코드 활성 · ${st.linked_count}명`;
+          badge.classList.add("ok");
+        } else {
+          badge.textContent = "토큰 미설정";
+          badge.classList.remove("ok");
+        }
+      } catch (_) {}
+    }
+
+    async function loadUsers() {
+      const res = await fetch("/api/users");
+      const data = await res.json();
+      const chips = document.getElementById("userChips");
+      chips.innerHTML = "";
+      const users = data.linked_users || [];
+      if (!users.length) {
+        chips.innerHTML = '<span class="brand-sub">연동된 디스코드 ID가 없습니다.</span>';
+        return;
+      }
+      users.forEach(uid => {
+        const chip = document.createElement("span");
+        chip.className = "chip";
+        chip.innerHTML = `<span>ID ${escapeHtml(uid)}</span><button type="button" class="btn-danger">삭제</button>`;
+        chip.querySelector("button").addEventListener("click", async () => {
+          await fetch(`/api/users/${encodeURIComponent(uid)}`, { method: "DELETE" });
+          await loadUsers();
+          await loadStatus();
+          setStatus(`디스코드 ID ${uid} 연동을 해제했습니다.`);
+        });
+        chips.appendChild(chip);
+      });
+    }
+
+    async function loadHistory() {
+      const res = await fetch("/api/history");
+      allHistory = await res.json();
+
+      const select = document.getElementById("userFilter");
+      const prev = select.value;
+      const ids = [...new Set(allHistory.map(h => h.user_id))];
+      select.innerHTML = '<option value="all">전체 기록</option>';
+      ids.forEach(id => {
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = id === "web-https" ? "웹앱 기록" : `디스코드 ID: ${id}`;
+        select.appendChild(opt);
+      });
+      if ([...select.options].some(o => o.value === prev)) {
+        select.value = prev;
+      }
+      render();
+    }
+
+    function render() {
+      const uid = document.getElementById("userFilter").value;
+      const kw = document.getElementById("filterInput").value.trim().toLowerCase();
+      const list = document.getElementById("list");
+      list.innerHTML = "";
+
+      const filtered = allHistory.filter(h => {
+        const matchUser = uid === "all" || h.user_id === uid;
+        const matchKw = !kw || (h.query || "").toLowerCase().includes(kw) ||
+          (h.results || []).some(r =>
+            (r.title || "").toLowerCase().includes(kw) ||
+            (r.summary || "").toLowerCase().includes(kw) ||
+            (r.key_point || "").toLowerCase().includes(kw)
+          );
+        return matchUser && matchKw;
+      });
+
+      if (!filtered.length) {
+        list.innerHTML = '<div class="entry"><div class="empty">표시할 기록이 없습니다. 검색하거나 기록 정리 상태를 확인해 보세요.</div></div>';
+        return;
+      }
+
+      filtered.forEach(entry => {
+        const card = document.createElement("article");
+        card.className = "entry";
+        const itemsHtml = (entry.results || []).map(r => {
+          const href = safeUrl(r.link);
+          const content = r.summary || "";
+          const important = r.key_point || content;
+          return `
+            <div class="item">
+              <div class="item-field"><strong>제목:</strong> ${escapeHtml(r.title)}</div>
+              <div class="item-field"><strong>내용:</strong> ${escapeHtml(content)}</div>
+              <div class="item-field"><strong>중요한것:</strong> ${escapeHtml(important)}</div>
+              <div class="item-link"><a href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer nofollow">링크: ${escapeHtml(href)}</a></div>
+            </div>
+          `;
+        }).join("");
+
+        card.innerHTML = `
+          <div class="entry-head">
+            <div>
+              <span>${escapeHtml(entry.time)}</span> ·
+              <span>${escapeHtml(entry.user_name)} (${escapeHtml(entry.user_id)})</span>
+              <span class="q-pill"># ${escapeHtml(entry.query)}</span>
+            </div>
+            <button type="button" class="btn-danger" data-id="${escapeHtml(entry.id || "")}">기록 삭제</button>
+          </div>
+          ${itemsHtml}
+        `;
+
+        card.querySelector(".entry-head .btn-danger").addEventListener("click", async () => {
+          if (!entry.id) return;
+          const res = await fetch(`/api/history/${encodeURIComponent(entry.id)}`, { method: "DELETE" });
+          if (res.ok) {
+            const data = await res.json();
+            allHistory = data.history || [];
+            render();
+            setStatus("선택한 기록을 삭제했습니다.");
+          }
+        });
+
+        list.appendChild(card);
+      });
+    }
+
+    document.getElementById("searchForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("queryInput");
+      const btn = document.getElementById("searchBtn");
+      const query = input.value.trim();
+      if (!query) return;
+
+      btn.disabled = true;
+      setStatus(`"${query}" 관련 사이트를 찾아 요약하는 중...`);
+      try {
+        const res = await fetch("/api/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ query, user_id: "web-https", user_name: "HTTPS 웹앱", limit: 4 })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "검색에 실패했습니다.");
+        allHistory = data.history || [];
+        input.value = "";
+        render();
+        setStatus(`"${query}" 자료 ${data.entry.results.length}건을 저장했습니다.`);
+      } catch (err) {
+        setStatus(`오류: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById("userForm").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const input = document.getElementById("discordIdInput");
+      const btn = document.getElementById("addUserBtn");
+      const raw = input.value.trim();
+
+      if (!/^\d+$/.test(raw)) {
+        setStatus("디스코드 사용자 ID는 숫자만 입력해 주세요.");
+        input.focus();
+        return;
+      }
+
+      btn.disabled = true;
+      try {
+        const res = await fetch("/api/users", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ user_id: raw })
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.detail || "디스코드 ID 등록에 실패했습니다.");
+
+        input.value = "";
+        await loadUsers();
+        await loadStatus();
+
+        if (data.already_linked) {
+          setStatus(`디스코드 ID ${raw}는 이미 연동되어 있습니다.`);
+        } else {
+          setStatus(`디스코드 ID ${raw}를 등록했습니다.`);
+        }
+      } catch (err) {
+        setStatus(`오류: ${err.message}`);
+      } finally {
+        btn.disabled = false;
+      }
+    });
+
+    document.getElementById("organizeBtn").addEventListener("click", async () => {
+      const res = await fetch("/api/history/clean", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clear_all: false })
+      });
+      if (res.ok) {
+        const data = await res.json();
+        allHistory = data.history || [];
+        render();
+        setStatus(`기록 정리 완료: 중복/불량 ${data.stats.removed_entries}건 정리, 현재 ${data.stats.remaining}건 유지`);
+      }
+    });
+
+    document.getElementById("clearAllBtn").addEventListener("click", async () => {
+      const res = await fetch("/api/history/clean", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clear_all: true })
+      });
+      if (res.ok) {
+        allHistory = [];
+        render();
+        setStatus("모든 기록을 삭제했습니다.");
+      }
+    });
+
+    document.getElementById("userFilter").addEventListener("change", render);
+    document.getElementById("filterInput").addEventListener("input", render);
+    document.getElementById("refreshBtn").addEventListener("click", async () => {
+      await loadStatus();
+      await loadUsers();
+      await loadHistory();
+      setStatus("최신 상태로 새로고침했습니다.");
+    });
+
+    (async () => {
+      await loadStatus();
+      await loadUsers();
+      await loadHistory();
+    })();
+  </script>
+</body>
+</html>
